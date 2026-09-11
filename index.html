@@ -180,7 +180,7 @@
               Live Digital Entry
             </span>
             <h2 class="text-xl font-bold text-slate-900">Customer Loan Application</h2>
-            <p class="text-xs text-slate-500">Fill details below. Live photo capture and digital signatures are supported directly in the browser.</p>
+            <p class="text-xs text-slate-500">Fill details below. Live photo capture and digital signatures (draw, upload, or camera snapshot) are supported directly in the browser.</p>
           </div>
           <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
             <div class="text-right">
@@ -615,38 +615,145 @@
           </div>
         </div>
 
-        <!-- 4. DIGITAL SIGNATURES & OFFICERS -->
+        <!-- 4. SIGNATURES & VERIFICATION (DRAW, UPLOAD, OR LIVE CAPTURE) -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-5 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <span class="w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold">4</span>
-              <h3 class="font-semibold text-sm tracking-wide uppercase">Digital Signatures & Officer Verification</h3>
+              <h3 class="font-semibold text-sm tracking-wide uppercase">Signatures & Verification (Draw, Upload, or Live Capture)</h3>
             </div>
             <span class="text-xs text-slate-300 font-mono">Pages 1, 2, 3, 4</span>
           </div>
 
-          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            <!-- Customer Signature Pad -->
-            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 flex flex-col items-center">
-              <div class="w-full flex items-center justify-between mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Customer Signature <span class="text-rose-500">*</span></span>
-                <button type="button" onclick="clearSignature('cust')" class="text-xs text-rose-600 hover:underline">Clear</button>
+            <!-- CUSTOMER SIGNATURE BOX -->
+            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 flex flex-col">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                  <span>✍️</span> Customer Signature <span class="text-rose-500">*</span>
+                </span>
+                <span id="custSigStatus" class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-semibold">Not Set</span>
               </div>
-              <canvas id="custSigCanvas" width="400" height="150" class="w-full bg-white border border-slate-300 rounded-lg touch-none shadow-inner"></canvas>
-              <p class="text-[11px] text-slate-400 mt-2">Draw customer signature using finger, stylus, or mouse above</p>
+
+              <!-- Tab Selector -->
+              <div class="flex rounded-lg bg-slate-200 p-1 mb-3 text-xs">
+                <button type="button" id="tabCustDraw" onclick="setSigTab('cust', 'draw')" class="flex-1 py-1 px-2 rounded-md font-semibold bg-white text-brand-700 shadow-sm transition">✍️ Draw</button>
+                <button type="button" id="tabCustUpload" onclick="setSigTab('cust', 'upload')" class="flex-1 py-1 px-2 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition">📁 Upload</button>
+                <button type="button" id="tabCustCam" onclick="setSigTab('cust', 'cam')" class="flex-1 py-1 px-2 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition">📸 Live Camera</button>
+              </div>
+
+              <!-- Mode 1: Draw Canvas -->
+              <div id="custDrawArea" class="sig-mode-area flex flex-col items-center">
+                <div class="w-full flex justify-between items-center mb-1 text-[11px] text-slate-500">
+                  <span>Sign below with finger or mouse:</span>
+                  <button type="button" onclick="clearSignature('cust')" class="text-rose-600 hover:underline font-semibold">Clear Pad</button>
+                </div>
+                <canvas id="custSigCanvas" width="400" height="150" class="w-full bg-white border border-slate-300 rounded-lg touch-none shadow-inner cursor-crosshair"></canvas>
+              </div>
+
+              <!-- Mode 2: Upload File -->
+              <div id="custUploadArea" class="sig-mode-area hidden flex flex-col items-center">
+                <label class="w-full h-36 border-2 border-dashed border-slate-300 hover:border-brand-500 bg-white rounded-lg flex flex-col items-center justify-center cursor-pointer transition p-4 text-center">
+                  <div id="custUploadPlaceholder" class="flex flex-col items-center">
+                    <svg class="w-8 h-8 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span class="text-xs font-semibold text-slate-700">Click to upload signature image</span>
+                    <span class="text-[10px] text-slate-400 mt-0.5">PNG, JPG, or WEBP (Max 5MB)</span>
+                  </div>
+                  <img id="custUploadPreview" src="" alt="Signature Preview" class="max-h-28 object-contain hidden" />
+                  <input type="file" id="custSigFileInput" accept="image/*" class="hidden" onchange="handleSignatureUpload(event, 'cust')" />
+                </label>
+                <div class="w-full flex justify-end mt-1.5">
+                  <button type="button" onclick="removeUploadedSig('cust')" id="custRemoveUploadBtn" class="text-xs text-rose-600 hover:underline hidden">Remove / Change</button>
+                </div>
+              </div>
+
+              <!-- Mode 3: Live Camera Capture -->
+              <div id="custCamArea" class="sig-mode-area hidden flex flex-col items-center">
+                <div class="relative w-full h-44 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-slate-300">
+                  <video id="custSigVideo" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                  <img id="custSigCamPreview" src="" alt="Captured Signature" class="w-full h-full object-contain bg-white hidden" />
+                  <canvas id="custSigCamCanvas" class="hidden"></canvas>
+                  <div id="custSigCamPrompt" class="text-center p-3 text-slate-400">
+                    <p class="text-xs">Point camera directly at the handwritten signature on paper</p>
+                  </div>
+                </div>
+                <div class="w-full flex gap-2 mt-2">
+                  <button type="button" id="custStartCamBtn" onclick="startSigCamera('cust')" class="flex-1 py-1.5 px-2 bg-brand-600 hover:bg-brand-700 text-white rounded text-xs font-semibold">📸 Start Camera</button>
+                  <button type="button" id="custSnapBtn" onclick="snapSigCamera('cust')" class="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-semibold hidden">⚡ Capture</button>
+                  <button type="button" id="custRetakeBtn" onclick="retakeSigCamera('cust')" class="flex-1 py-1.5 px-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded text-xs font-semibold hidden">🔄 Retake</button>
+                </div>
+              </div>
             </div>
 
-            <!-- Sales Officer Pad / Details -->
-            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 flex flex-col items-center">
-              <div class="w-full flex items-center justify-between mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Sales Officer's Signature</span>
-                <button type="button" onclick="clearSignature('officer')" class="text-xs text-rose-600 hover:underline">Clear</button>
+            <!-- SALES OFFICER SIGNATURE BOX -->
+            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 flex flex-col">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                  <span>🖋️</span> Sales Officer's Signature
+                </span>
+                <span id="officerSigStatus" class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-semibold">Not Set</span>
               </div>
-              <canvas id="officerSigCanvas" width="400" height="150" class="w-full bg-white border border-slate-300 rounded-lg touch-none shadow-inner"></canvas>
-              <div class="w-full grid grid-cols-2 gap-2 mt-2">
-                <input type="text" id="officerPlace" value="KALNA" placeholder="Place" class="text-xs px-2 py-1 bg-white border rounded font-medium" />
-                <input type="date" id="officerDate" class="text-xs px-2 py-1 bg-white border rounded" />
+
+              <!-- Tab Selector -->
+              <div class="flex rounded-lg bg-slate-200 p-1 mb-3 text-xs">
+                <button type="button" id="tabOfficerDraw" onclick="setSigTab('officer', 'draw')" class="flex-1 py-1 px-2 rounded-md font-semibold bg-white text-brand-700 shadow-sm transition">✍️ Draw</button>
+                <button type="button" id="tabOfficerUpload" onclick="setSigTab('officer', 'upload')" class="flex-1 py-1 px-2 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition">📁 Upload</button>
+                <button type="button" id="tabOfficerCam" onclick="setSigTab('officer', 'cam')" class="flex-1 py-1 px-2 rounded-md font-semibold text-slate-600 hover:text-slate-900 transition">📸 Live Camera</button>
+              </div>
+
+              <!-- Mode 1: Draw Canvas -->
+              <div id="officerDrawArea" class="sig-mode-area flex flex-col items-center">
+                <div class="w-full flex justify-between items-center mb-1 text-[11px] text-slate-500">
+                  <span>Draw officer signature below:</span>
+                  <button type="button" onclick="clearSignature('officer')" class="text-rose-600 hover:underline font-semibold">Clear Pad</button>
+                </div>
+                <canvas id="officerSigCanvas" width="400" height="150" class="w-full bg-white border border-slate-300 rounded-lg touch-none shadow-inner cursor-crosshair"></canvas>
+              </div>
+
+              <!-- Mode 2: Upload File -->
+              <div id="officerUploadArea" class="sig-mode-area hidden flex flex-col items-center">
+                <label class="w-full h-36 border-2 border-dashed border-slate-300 hover:border-brand-500 bg-white rounded-lg flex flex-col items-center justify-center cursor-pointer transition p-4 text-center">
+                  <div id="officerUploadPlaceholder" class="flex flex-col items-center">
+                    <svg class="w-8 h-8 text-slate-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span class="text-xs font-semibold text-slate-700">Click to upload officer signature</span>
+                    <span class="text-[10px] text-slate-400 mt-0.5">PNG, JPG, or WEBP (Max 5MB)</span>
+                  </div>
+                  <img id="officerUploadPreview" src="" alt="Signature Preview" class="max-h-28 object-contain hidden" />
+                  <input type="file" id="officerSigFileInput" accept="image/*" class="hidden" onchange="handleSignatureUpload(event, 'officer')" />
+                </label>
+                <div class="w-full flex justify-end mt-1.5">
+                  <button type="button" onclick="removeUploadedSig('officer')" id="officerRemoveUploadBtn" class="text-xs text-rose-600 hover:underline hidden">Remove / Change</button>
+                </div>
+              </div>
+
+              <!-- Mode 3: Live Camera Capture -->
+              <div id="officerCamArea" class="sig-mode-area hidden flex flex-col items-center">
+                <div class="relative w-full h-44 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center border border-slate-300">
+                  <video id="officerSigVideo" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                  <img id="officerSigCamPreview" src="" alt="Captured Signature" class="w-full h-full object-contain bg-white hidden" />
+                  <canvas id="officerSigCamCanvas" class="hidden"></canvas>
+                  <div id="officerSigCamPrompt" class="text-center p-3 text-slate-400">
+                    <p class="text-xs">Point camera directly at the officer signature or stamp</p>
+                  </div>
+                </div>
+                <div class="w-full flex gap-2 mt-2">
+                  <button type="button" id="officerStartCamBtn" onclick="startSigCamera('officer')" class="flex-1 py-1.5 px-2 bg-brand-600 hover:bg-brand-700 text-white rounded text-xs font-semibold">📸 Start Camera</button>
+                  <button type="button" id="officerSnapBtn" onclick="snapSigCamera('officer')" class="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-semibold hidden">⚡ Capture</button>
+                  <button type="button" id="officerRetakeBtn" onclick="retakeSigCamera('officer')" class="flex-1 py-1.5 px-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded text-xs font-semibold hidden">🔄 Retake</button>
+                </div>
+              </div>
+
+              <!-- Officer Verification Meta -->
+              <div class="w-full grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-slate-200">
+                <div>
+                  <label class="block text-[10px] font-semibold text-slate-500 uppercase">Verification Place</label>
+                  <input type="text" id="officerPlace" value="KALNA" placeholder="Place" class="text-xs px-2.5 py-1.5 bg-white border border-slate-300 rounded font-semibold w-full mt-0.5" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-semibold text-slate-500 uppercase">Verification Date</label>
+                  <input type="date" id="officerDate" class="text-xs px-2.5 py-1.5 bg-white border border-slate-300 rounded w-full mt-0.5" />
+                </div>
               </div>
             </div>
 
@@ -1226,7 +1333,15 @@
       }
 
       function stopDraw() {
-        isDrawing = false;
+        if (isDrawing) {
+          isDrawing = false;
+          const role = canvasId.includes('cust') ? 'cust' : 'officer';
+          const statusEl = document.getElementById(role + 'SigStatus');
+          if (statusEl) {
+            statusEl.innerText = 'Hand-Drawn';
+            statusEl.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold';
+          }
+        }
       }
 
       canvas.addEventListener('mousedown', startDraw);
@@ -1244,10 +1359,176 @@
       if (canvas) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const statusEl = document.getElementById(type + 'SigStatus');
+        if (statusEl) {
+          statusEl.innerText = 'Not Set';
+          statusEl.className = 'text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-semibold';
+        }
       }
     }
 
-    // --- LIVE CAMERA FUNCTIONS ---
+    // Signature State & Active Modes
+    let activeSigTab = { cust: 'draw', officer: 'draw' };
+    let uploadedSigData = { cust: null, officer: null };
+    let camSigData = { cust: null, officer: null };
+    let sigVideoStreams = { cust: null, officer: null };
+
+    function setSigTab(role, mode) {
+      activeSigTab[role] = mode;
+      
+      const drawTab = document.getElementById(role === 'cust' ? 'tabCustDraw' : 'tabOfficerDraw');
+      const uploadTab = document.getElementById(role === 'cust' ? 'tabCustUpload' : 'tabOfficerUpload');
+      const camTab = document.getElementById(role === 'cust' ? 'tabCustCam' : 'tabOfficerCam');
+
+      const drawArea = document.getElementById(role === 'cust' ? 'custDrawArea' : 'officerDrawArea');
+      const uploadArea = document.getElementById(role === 'cust' ? 'custUploadArea' : 'officerUploadArea');
+      const camArea = document.getElementById(role === 'cust' ? 'custCamArea' : 'officerCamArea');
+
+      // Reset tab styling
+      [drawTab, uploadTab, camTab].forEach(btn => {
+        btn.classList.remove('bg-white', 'text-brand-700', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+      });
+
+      // Hide all areas
+      [drawArea, uploadArea, camArea].forEach(area => area.classList.add('hidden'));
+
+      // Stop camera if leaving camera tab
+      if (mode !== 'cam' && sigVideoStreams[role]) {
+        sigVideoStreams[role].getTracks().forEach(t => t.stop());
+        sigVideoStreams[role] = null;
+      }
+
+      if (mode === 'draw') {
+        drawTab.classList.add('bg-white', 'text-brand-700', 'shadow-sm');
+        drawArea.classList.remove('hidden');
+      } else if (mode === 'upload') {
+        uploadTab.classList.add('bg-white', 'text-brand-700', 'shadow-sm');
+        uploadArea.classList.remove('hidden');
+      } else if (mode === 'cam') {
+        camTab.classList.add('bg-white', 'text-brand-700', 'shadow-sm');
+        camArea.classList.remove('hidden');
+      }
+    }
+
+    function handleSignatureUpload(event, role) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadedSigData[role] = e.target.result;
+        const preview = document.getElementById(role + 'UploadPreview');
+        const placeholder = document.getElementById(role + 'UploadPlaceholder');
+        const removeBtn = document.getElementById(role + 'RemoveUploadBtn');
+        const statusEl = document.getElementById(role + 'SigStatus');
+
+        preview.src = e.target.result;
+        preview.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        removeBtn.classList.remove('hidden');
+
+        if (statusEl) {
+          statusEl.innerText = 'Uploaded File';
+          statusEl.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold';
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeUploadedSig(role) {
+      uploadedSigData[role] = null;
+      document.getElementById(role + 'UploadPreview').src = '';
+      document.getElementById(role + 'UploadPreview').classList.add('hidden');
+      document.getElementById(role + 'UploadPlaceholder').classList.remove('hidden');
+      document.getElementById(role + 'RemoveUploadBtn').classList.add('hidden');
+      document.getElementById(role + 'SigFileInput').value = '';
+
+      const statusEl = document.getElementById(role + 'SigStatus');
+      if (statusEl) {
+        statusEl.innerText = 'Not Set';
+        statusEl.className = 'text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-semibold';
+      }
+    }
+
+    async function startSigCamera(role) {
+      try {
+        const video = document.getElementById(role + 'SigVideo');
+        const prompt = document.getElementById(role + 'SigCamPrompt');
+        const preview = document.getElementById(role + 'SigCamPreview');
+        const startBtn = document.getElementById(role + 'StartCamBtn');
+        const snapBtn = document.getElementById(role + 'SnapBtn');
+        const retakeBtn = document.getElementById(role + 'RetakeBtn');
+
+        sigVideoStreams[role] = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: { ideal: 640 }, height: { ideal: 360 } }
+        });
+
+        video.srcObject = sigVideoStreams[role];
+        video.classList.remove('hidden');
+        prompt.classList.add('hidden');
+        preview.classList.add('hidden');
+        startBtn.classList.add('hidden');
+        snapBtn.classList.remove('hidden');
+        retakeBtn.classList.add('hidden');
+      } catch (err) {
+        console.error("Signature camera error:", err);
+        alert("Camera could not be accessed. You can draw or upload the signature file.");
+      }
+    }
+
+    function snapSigCamera(role) {
+      const video = document.getElementById(role + 'SigVideo');
+      const canvas = document.getElementById(role + 'SigCamCanvas');
+      const preview = document.getElementById(role + 'SigCamPreview');
+      const snapBtn = document.getElementById(role + 'SnapBtn');
+      const retakeBtn = document.getElementById(role + 'RetakeBtn');
+      const statusEl = document.getElementById(role + 'SigStatus');
+
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 360;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      camSigData[role] = canvas.toDataURL('image/jpeg', 0.9);
+      preview.src = camSigData[role];
+      preview.classList.remove('hidden');
+      video.classList.add('hidden');
+      snapBtn.classList.add('hidden');
+      retakeBtn.classList.remove('hidden');
+
+      if (sigVideoStreams[role]) {
+        sigVideoStreams[role].getTracks().forEach(t => t.stop());
+        sigVideoStreams[role] = null;
+      }
+
+      if (statusEl) {
+        statusEl.innerText = 'Camera Snapshot';
+        statusEl.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold';
+      }
+    }
+
+    function retakeSigCamera(role) {
+      startSigCamera(role);
+    }
+
+    function getFinalSignatureData(role) {
+      const tab = activeSigTab[role];
+      if (tab === 'upload' && uploadedSigData[role]) {
+        return uploadedSigData[role];
+      }
+      if (tab === 'cam' && camSigData[role]) {
+        return camSigData[role];
+      }
+      const canvasId = role === 'cust' ? 'custSigCanvas' : 'officerSigCanvas';
+      const canvas = document.getElementById(canvasId);
+      if (canvas) {
+        return canvas.toDataURL('image/png');
+      }
+      return null;
+    }
+
+    // --- LIVE CAMERA FUNCTIONS FOR PASSPORT PHOTO ---
     async function startCamera() {
       try {
         const video = document.getElementById('videoElement');
@@ -1286,7 +1567,6 @@
       canvas.height = video.videoHeight || 480;
       const ctx = canvas.getContext('2d');
 
-      // Mirror horizontally like selfie
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -1299,7 +1579,6 @@
       snapBtn.classList.add('hidden');
       retakeBtn.classList.remove('hidden');
 
-      // Stop camera stream
       if (videoStream) {
         videoStream.getTracks().forEach(track => track.stop());
         videoStream = null;
@@ -1467,6 +1746,10 @@
       // Sample draw on canvases
       drawSampleSignature('custSigCanvas', 'Pritam Modak');
       drawSampleSignature('officerSigCanvas', 'EasyFinance');
+      document.getElementById('custSigStatus').innerText = 'Hand-Drawn';
+      document.getElementById('custSigStatus').className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold';
+      document.getElementById('officerSigStatus').innerText = 'Hand-Drawn';
+      document.getElementById('officerSigStatus').className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold';
     }
 
     function drawSampleSignature(canvasId, text) {
@@ -1490,6 +1773,8 @@
         document.getElementById('loanForm').reset();
         clearSignature('cust');
         clearSignature('officer');
+        removeUploadedSig('cust');
+        removeUploadedSig('officer');
         capturedPhotoData = null;
         document.getElementById('photoPreview').classList.add('hidden');
         document.getElementById('photoPlaceholder').classList.remove('hidden');
@@ -1505,11 +1790,9 @@
         document.getElementById('p1_photo_alt').classList.add('hidden');
       }
 
-      // 2. Signature Mapping
-      const custCanvas = document.getElementById('custSigCanvas');
-      const officerCanvas = document.getElementById('officerSigCanvas');
-      const custData = custCanvas.toDataURL('image/png');
-      const officerData = officerCanvas.toDataURL('image/png');
+      // 2. Signature Mapping (Draw, Upload, or Camera Capture)
+      const custData = getFinalSignatureData('cust');
+      const officerData = getFinalSignatureData('officer');
 
       ['p1', 'p2', 'p3', 'p4'].forEach(prefix => {
         const custImg = document.getElementById(prefix + '_custSigImg');
