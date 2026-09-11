@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EASY TO FINANCE SERVICE - Digital Application Portal</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tinos:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    /* Print Stylesheet */
+    @media print {
+      body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #000000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      #printContainer {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .a4-page {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        padding: 10mm 12mm !important;
+        margin: 0 auto !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        box-shadow: none !important;
+        border: none !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        background: #ffffff !important;
+        overflow: hidden !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+
+    @media screen {
+      .preview-mode #screenApp {
+        display: none;
+      }
+      .preview-mode #printContainer {
+        display: block;
+      }
+      #printContainer {
+        display: none;
+      }
+      .a4-page {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 12mm 14mm;
+        margin: 24px auto;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        position: relative;
+      }
+    }
+
+    .doc-font {
+      font-family: 'Tinos', serif, 'Times New Roman';
+    }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .doc-table th, .doc-table td {
+      border: 1px solid #000000;
+      padding: 3px 5px;
+      font-size: 12px;
+      line-height: 1.25;
+      color: #000000;
+      vertical-align: middle;
+      word-wrap: break-word;
+    }
+    .doc-header-title {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1px;
+    }
+
+    /* Custom Checkbox display for print */
+    .print-box {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 1px solid #000;
+      margin-right: 4px;
+      text-align: center;
+      line-height: 11px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    /* Camera Video & Canvas */
+    #videoElement {
+      transform: scaleX(-1);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+  <!-- ======================================================== -->
+  <!-- SCREEN WEB APPLICATION (Interactive Digital Form View) -->
+  <!-- ======================================================== -->
+  <div id="screenApp" class="no-print">
+    <!-- Top App Navigation -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-700 text-white flex items-center justify-center font-bold text-xl shadow">
+            EF
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-slate-900 leading-tight">EASY TO FINANCE SERVICE</h1>
+            <p class="text-xs text-slate-500 font-medium">Digital Customer Application & Loan Documentation Portal • Kalna-713409</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button type="button" onclick="fillSampleData()" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+            <span>✨</span> Fill Sample Data
+          </button>
+          <button type="button" onclick="resetForm()" class="px-3 py-1.5 text-xs font-semibold bg-white hover:bg-rose-50 text-rose-600 rounded-lg border border-rose-200 transition flex items-center gap-1.5">
+            <span>🔄</span> Reset
+          </button>
+          <button type="button" onclick="previewDocument()" class="px-4 py-1.5 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-lg shadow-sm transition flex items-center gap-1.5">
+            <span>📄</span> Generate & Preview Form
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6">
+      
+      <!-- Stepper / Overview Bar -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 mb-1">
+              Live Digital Entry
+            </span>
+            <h2 class="text-xl font-bold text-slate-900">Customer Loan Application</h2>
+            <p class="text-xs text-slate-500">Fill details below. Live photo capture and digital signatures are supported directly in the browser.</p>
+          </div>
+          <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+            <div class="text-right">
+              <div class="text-xs text-slate-400">Form Number</div>
+              <input type="text" id="formNo" value="EFS-2026-0418" class="text-sm font-bold text-brand-700 bg-transparent border-b border-dashed border-slate-300 focus:outline-none w-32 text-right" />
+            </div>
+            <div class="h-8 w-px bg-slate-200"></div>
+            <div>
+              <div class="text-xs text-slate-400">Application Date</div>
+              <input type="date" id="appDate" class="text-xs font-semibold text-slate-700 bg-transparent border-b border-dashed border-slate-300 focus:outline-none" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Form -->
+      <form id="loanForm" onsubmit="event.preventDefault(); previewDocument();" class="space-y-6">
+
+        <!-- 1. LIVE PHOTO CAPTURE & BASIC CUSTOMER DETAILS -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-5 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold">1</span>
+              <h3 class="font-semibold text-sm tracking-wide uppercase">Customer Details & Live Photo Capture</h3>
+            </div>
+            <span class="text-xs text-slate-300 font-mono">Page 1 Section</span>
+          </div>
+
+          <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              <!-- Live Camera / Photo Box (Right side on form, 4 cols on lg) -->
+              <div class="lg:col-span-4 flex flex-col items-center bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                <div class="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center gap-1">
+                  <span>📷</span> Passport Size Photo
+                </div>
+                
+                <!-- Display Box -->
+                <div class="relative w-44 h-52 bg-slate-200 rounded-lg border-2 border-dashed border-slate-400 flex flex-col items-center justify-center overflow-hidden mb-3 shadow-inner">
+                  <img id="photoPreview" src="" alt="Customer Photo" class="w-full h-full object-cover hidden" />
+                  <video id="videoElement" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                  <canvas id="photoCanvas" class="hidden"></canvas>
+                  
+                  <div id="photoPlaceholder" class="flex flex-col items-center justify-center p-3 text-slate-400">
+                    <svg class="w-12 h-12 mb-2 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="text-xs font-medium">No Photo Taken</span>
+                  </div>
+
+                  <!-- Face guide overlay when camera is on -->
+                  <div id="cameraGuide" class="absolute inset-2 border-2 border-brand-400 rounded-full border-dashed opacity-60 pointer-events-none hidden"></div>
+                </div>
+
+                <!-- Camera Action Controls -->
+                <div class="w-full space-y-2">
+                  <div id="cameraControls" class="flex flex-col gap-1.5 w-full">
+                    <button type="button" id="startCamBtn" onclick="startCamera()" class="w-full py-2 px-3 text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white rounded-lg shadow-sm transition flex items-center justify-center gap-1.5">
+                      <span>📸</span> Start Live Camera
+                    </button>
+                    <button type="button" id="snapBtn" onclick="capturePhoto()" class="w-full py-2 px-3 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm transition hidden flex items-center justify-center gap-1.5">
+                      <span>⚡</span> Capture Snapshot
+                    </button>
+                    <button type="button" id="retakeBtn" onclick="retakePhoto()" class="w-full py-1.5 px-3 text-xs font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition hidden">
+                      🔄 Retake Photo
+                    </button>
+                  </div>
+                  
+                  <div class="relative flex py-1 items-center">
+                    <div class="flex-grow border-t border-slate-200"></div>
+                    <span class="flex-shrink mx-2 text-[10px] text-slate-400 uppercase tracking-wider">or upload</span>
+                    <div class="flex-grow border-t border-slate-200"></div>
+                  </div>
+
+                  <label class="w-full block py-1.5 px-3 text-xs font-medium bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded-lg cursor-pointer transition">
+                    <span>📁 Choose Image File</span>
+                    <input type="file" id="fileUpload" accept="image/*" class="hidden" onchange="handleFilePhoto(event)" />
+                  </label>
+                </div>
+              </div>
+
+              <!-- Customer Fields (8 cols on lg) -->
+              <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Customer ID <span class="text-rose-500">*</span></label>
+                  <div class="flex">
+                    <span class="inline-flex items-center px-2.5 rounded-l-md border border-r-0 border-slate-300 bg-slate-100 text-slate-500 text-xs font-mono">EFS</span>
+                    <input type="text" id="customerId" value="1092" required class="flex-1 min-w-0 block w-full px-3 py-2 text-sm border border-slate-300 rounded-r-md focus:ring-brand-500 focus:border-brand-500 font-mono" placeholder="e.g. 1092" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Customer Full Name <span class="text-rose-500">*</span></label>
+                  <input type="text" id="customerName" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Full name as per official ID" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Date of Birth (DOB) <span class="text-rose-500">*</span></label>
+                  <input type="date" id="dob" required onchange="calculateAge()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Age (Years)</label>
+                  <input type="number" id="age" min="18" max="100" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50" placeholder="Auto-calculated" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Gender <span class="text-rose-500">*</span></label>
+                  <div class="flex items-center gap-6 mt-2">
+                    <label class="inline-flex items-center text-sm">
+                      <input type="radio" name="gender" value="Male" checked class="text-brand-600 focus:ring-brand-500" />
+                      <span class="ml-2 text-xs font-medium text-slate-700">Male</span>
+                    </label>
+                    <label class="inline-flex items-center text-sm">
+                      <input type="radio" name="gender" value="Female" class="text-brand-600 focus:ring-brand-500" />
+                      <span class="ml-2 text-xs font-medium text-slate-700">Female</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Marital Status <span class="text-rose-500">*</span></label>
+                  <div class="flex items-center gap-6 mt-2">
+                    <label class="inline-flex items-center text-sm">
+                      <input type="radio" name="maritalStatus" value="Married" checked class="text-brand-600 focus:ring-brand-500" />
+                      <span class="ml-2 text-xs font-medium text-slate-700">Married</span>
+                    </label>
+                    <label class="inline-flex items-center text-sm">
+                      <input type="radio" name="maritalStatus" value="Unmarried" class="text-brand-600 focus:ring-brand-500" />
+                      <span class="ml-2 text-xs font-medium text-slate-700">Unmarried</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Father's / Husband's Name <span class="text-rose-500">*</span></label>
+                  <input type="text" id="guardianName" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Father or Husband name" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Mother's Name</label>
+                  <input type="text" id="motherName" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Mother's name" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Religion</label>
+                  <input type="text" id="religion" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="e.g. Hindu, Muslim, Christian, etc." />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Landmark</label>
+                  <input type="text" id="landmark" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Nearby landmark" />
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Current Address <span class="text-rose-500">*</span></label>
+                  <textarea id="currentAddress" rows="2" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Complete residential address"></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Village / Locality</label>
+                  <input type="text" id="village" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Village name" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">City / Town <span class="text-rose-500">*</span></label>
+                  <input type="text" id="city" value="Kalna" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="City or Town" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">District <span class="text-rose-500">*</span></label>
+                  <input type="text" id="district" value="Purba Bardhaman" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">State <span class="text-rose-500">*</span></label>
+                  <input type="text" id="state" value="West Bengal" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50" readonly />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">PIN Code <span class="text-rose-500">*</span></label>
+                  <input type="text" id="pin" value="713409" maxlength="6" pattern="[0-9]{6}" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. OCCUPATION & KYC DETAILS -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-5 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold">2</span>
+              <h3 class="font-semibold text-sm tracking-wide uppercase">Occupation & KYC Verification</h3>
+            </div>
+            <span class="text-xs text-slate-300 font-mono">Page 1 Section</span>
+          </div>
+
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Occupation -->
+            <div class="space-y-4">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Occupation Details</h4>
+              
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-2">Employment Type <span class="text-rose-500">*</span></label>
+                <div class="grid grid-cols-3 gap-2">
+                  <label class="border p-2 rounded-lg text-center cursor-pointer hover:bg-slate-50 transition block">
+                    <input type="radio" name="empType" value="Salaried - Govt." class="text-brand-600" />
+                    <div class="text-xs font-medium mt-1">Salaried Govt.</div>
+                  </label>
+                  <label class="border p-2 rounded-lg text-center cursor-pointer hover:bg-slate-50 transition block">
+                    <input type="radio" name="empType" value="Salaried - Private" checked class="text-brand-600" />
+                    <div class="text-xs font-medium mt-1">Salaried Private</div>
+                  </label>
+                  <label class="border p-2 rounded-lg text-center cursor-pointer hover:bg-slate-50 transition block">
+                    <input type="radio" name="empType" value="Self Employed" class="text-brand-600" />
+                    <div class="text-xs font-medium mt-1">Self Employed</div>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Monthly Income (Rs.) <span class="text-rose-500">*</span></label>
+                <div class="relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 text-xs">₹</div>
+                  <input type="number" id="monthlyIncome" value="25000" required class="w-full pl-8 pr-3 py-2 text-sm border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="e.g. 25000" />
+                </div>
+              </div>
+            </div>
+
+            <!-- KYC -->
+            <div class="space-y-4">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1">KYC Details</h4>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">PAN Number <span class="text-rose-500">*</span></label>
+                  <input type="text" id="panNo" maxlength="10" uppercase required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md uppercase font-mono" placeholder="ABCDE1234F" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Aadhaar Number <span class="text-rose-500">*</span></label>
+                  <input type="text" id="aadhaarNo" maxlength="14" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="12-digit Aadhaar" oninput="formatAadhaar(this)" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Email ID</label>
+                <input type="email" id="emailId" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="name@example.com" />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Mobile No. <span class="text-rose-500">*</span></label>
+                  <input type="tel" id="mobileNo" maxlength="10" required oninput="syncWhatsApp()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="10-digit mobile" />
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-semibold text-slate-600">WhatsApp No.</label>
+                    <label class="text-[10px] text-brand-600 cursor-pointer flex items-center">
+                      <input type="checkbox" id="sameWa" onchange="syncWhatsApp()" checked class="mr-1 rounded text-xs" /> Same
+                    </label>
+                  </div>
+                  <input type="tel" id="whatsappNo" maxlength="10" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="WhatsApp no." />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Alt. Mobile No.</label>
+                  <input type="tel" id="altMobileNo" maxlength="10" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="Alternate no." />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- References Section -->
+          <div class="p-6 bg-slate-50 border-t border-slate-200">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Family / Personal References</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-2">
+                <span class="text-xs font-bold text-brand-700">Reference 1</span>
+                <div class="grid grid-cols-3 gap-2">
+                  <input type="text" id="ref1Name" placeholder="Name" class="text-xs px-2 py-1.5 border rounded col-span-1" />
+                  <input type="text" id="ref1Relation" placeholder="Relation (e.g. Brother)" class="text-xs px-2 py-1.5 border rounded col-span-1" />
+                  <input type="tel" id="ref1Mobile" maxlength="10" placeholder="Mobile No." class="text-xs px-2 py-1.5 border rounded col-span-1 font-mono" />
+                </div>
+              </div>
+              <div class="p-3 bg-white rounded-lg border border-slate-200 space-y-2">
+                <span class="text-xs font-bold text-brand-700">Reference 2</span>
+                <div class="grid grid-cols-3 gap-2">
+                  <input type="text" id="ref2Name" placeholder="Name" class="text-xs px-2 py-1.5 border rounded col-span-1" />
+                  <input type="text" id="ref2Relation" placeholder="Relation (e.g. Friend)" class="text-xs px-2 py-1.5 border rounded col-span-1" />
+                  <input type="tel" id="ref2Mobile" maxlength="10" placeholder="Mobile No." class="text-xs px-2 py-1.5 border rounded col-span-1 font-mono" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. BANK DETAILS & PRODUCT / LOAN FINANCING DETAILS -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-5 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold">3</span>
+              <h3 class="font-semibold text-sm tracking-wide uppercase">Bank Details & Product Finance</h3>
+            </div>
+            <span class="text-xs text-slate-300 font-mono">Page 2 Section</span>
+          </div>
+
+          <div class="p-6 space-y-6">
+            
+            <!-- Bank Details -->
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1 mb-3">Customer Bank Details</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Bank Name <span class="text-rose-500">*</span></label>
+                  <input type="text" id="bankName" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="e.g. State Bank of India" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">A/C Holder Name <span class="text-rose-500">*</span></label>
+                  <input type="text" id="acHolderName" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="Name as in passbook" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Account Number <span class="text-rose-500">*</span></label>
+                  <input type="text" id="acNo" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="Full Account Number" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Branch Name</label>
+                  <input type="text" id="branch" value="Kalna" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="Branch" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">IFSC Code <span class="text-rose-500">*</span></label>
+                  <input type="text" id="ifscCode" uppercase required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md uppercase font-mono" placeholder="e.g. SBIN0000103" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">A/C Type</label>
+                  <select id="acType" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md">
+                    <option value="Savings">Savings</option>
+                    <option value="Current">Current</option>
+                  </select>
+                </div>
+                <div class="sm:col-span-3">
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Dealer Name / Store</label>
+                  <input type="text" id="dealerName" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="Store or Dealer where mobile is purchased" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Product & Finance Details -->
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 border-b pb-1 mb-3">Product & Loan Details</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Product Type</label>
+                  <input type="text" id="productType" value="Mobile" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50" readonly />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Product Name (Brand) <span class="text-rose-500">*</span></label>
+                  <input type="text" id="productName" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="e.g. Samsung / Realme / Vivo" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Model No.</label>
+                  <input type="text" id="modelNo" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" placeholder="e.g. Galaxy M34 5G (8GB/128GB)" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">IMEI No. 1</label>
+                  <input type="text" id="imei1" maxlength="15" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="15-digit IMEI 1" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">IMEI No. 2</label>
+                  <input type="text" id="imei2" maxlength="15" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono" placeholder="15-digit IMEI 2" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Tenure (Months) <span class="text-rose-500">*</span></label>
+                  <select id="tenureMonths" onchange="calculateLoan()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md">
+                    <option value="3">3 Months</option>
+                    <option value="6" selected>6 Months</option>
+                    <option value="9">9 Months</option>
+                    <option value="12">12 Months</option>
+                    <option value="18">18 Months</option>
+                    <option value="24">24 Months</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Price & Calculation Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4 p-4 bg-brand-50/50 rounded-xl border border-brand-100">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Product Price (Rs.) <span class="text-rose-500">*</span></label>
+                  <input type="number" id="productPrice" value="18000" oninput="calculateLoan()" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-semibold" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Down Payment (Rs.) <span class="text-rose-500">*</span></label>
+                  <input type="number" id="downPayment" value="3000" oninput="calculateLoan()" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-semibold text-emerald-700" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Processing Charge (Rs.)</label>
+                  <input type="number" id="procCharge" value="500" oninput="calculateLoan()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">Other Charges (Rs.)</label>
+                  <input type="number" id="otherCharge" value="0" oninput="calculateLoan()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md" />
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-brand-900 mb-1">Total Finance Amount (Rs.)</label>
+                  <input type="number" id="financeAmount" readonly class="w-full px-3 py-2 text-base font-bold bg-white border border-brand-300 text-brand-700 rounded-md" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-brand-900 mb-1">Monthly EMI (Rs.)</label>
+                  <input type="number" id="monthlyEmi" readonly class="w-full px-3 py-2 text-base font-bold bg-white border border-brand-300 text-brand-700 rounded-md" />
+                </div>
+
+                <div class="sm:col-span-4">
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Amount In Words</label>
+                  <input type="text" id="amountInWords" readonly class="w-full px-3 py-2 text-xs font-medium bg-slate-50 border border-slate-300 rounded-md italic text-slate-700" />
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Monthly EMI Due Date</label>
+                  <input type="text" id="emiDueDate" value="7th of every month" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">EMI Start Month / Year</label>
+                  <input type="month" id="emiStartMonth" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 4. DIGITAL SIGNATURES & OFFICERS -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-5 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-6 h-6 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold">4</span>
+              <h3 class="font-semibold text-sm tracking-wide uppercase">Digital Signatures & Officer Verification</h3>
+            </div>
+            <span class="text-xs text-slate-300 font-mono">Pages 1, 2, 3, 4</span>
+          </div>
+
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Customer Signature Pad -->
+            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 flex flex-col items-center">
+              <div class="w-full flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Customer Signature <span class="text-rose-500">*</span></span>
+                <button type="button" onclick="clearSignature('cust')" class="text-xs text-rose-600 hover:underline">Clear</button>
+              </div>
+              <canvas id="custSigCanvas" width="400" height="150" class="w-full bg-white border border-slate-300 rounded-lg touch-none shadow-inner"></canvas>
+              <p class="text-[11px] text-slate-400 mt-2">Draw customer signature using finger, stylus, or mouse above</p>
+            </div>
+
+            <!-- Sales Officer Pad / Details -->
+            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 flex flex-col items-center">
+              <div class="w-full flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Sales Officer's Signature</span>
+                <button type="button" onclick="clearSignature('officer')" class="text-xs text-rose-600 hover:underline">Clear</button>
+              </div>
+              <canvas id="officerSigCanvas" width="400" height="150" class="w-full bg-white border border-slate-300 rounded-lg touch-none shadow-inner"></canvas>
+              <div class="w-full grid grid-cols-2 gap-2 mt-2">
+                <input type="text" id="officerPlace" value="KALNA" placeholder="Place" class="text-xs px-2 py-1 bg-white border rounded font-medium" />
+                <input type="date" id="officerDate" class="text-xs px-2 py-1 bg-white border rounded" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Submit Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4">
+          <button type="button" onclick="previewDocument()" class="w-full sm:w-auto px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2 text-base">
+            <span>✨ Generate 4-Page Replica Document</span>
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- GENERATED PRINT/PDF 4-PAGE DOCUMENT CONTAINER -->
+  <!-- ======================================================== -->
+  <div id="printContainer" class="doc-font">
+    
+    <!-- Floating Action Toolbar (Screen only) -->
+    <div class="no-print sticky top-4 z-50 max-w-4xl mx-auto mb-6 px-4">
+      <div class="bg-slate-900/90 backdrop-blur text-white px-5 py-3 rounded-2xl shadow-2xl flex flex-wrap items-center justify-between gap-4 border border-slate-700">
+        <div class="flex items-center space-x-3">
+          <span class="inline-flex h-3 w-3 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+          </span>
+          <div>
+            <div class="text-sm font-bold">Document Ready (All 4 Pages)</div>
+            <div class="text-[11px] text-slate-300">Exact 1:1 replica of physical forms • Ready for A4 Print / PDF</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="backToEdit()" class="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-600 transition flex items-center gap-1.5">
+            <span>✏️ Edit Details</span>
+          </button>
+          <button type="button" onclick="triggerPrint()" class="px-5 py-2 text-xs font-bold bg-brand-500 hover:bg-brand-400 text-white rounded-xl shadow-lg transition flex items-center gap-2">
+            <span>🖨️ Print / Save as PDF</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 1 : CUSTOMER & KYC DETAILS -->
+    <!-- ========================================== -->
+    <section class="a4-page">
+      <!-- Title Header -->
+      <div class="doc-header text-center">
+        <h1 class="text-xl font-bold tracking-wider uppercase m-0 p-0 doc-header-title">EASY TO FINANCE SERVICE</h1>
+        <div class="flex justify-between items-center text-xs font-semibold mt-1 px-1">
+          <div>Form No - <span class="font-bold underline" id="p1_formNo">EFS-2026-0418</span></div>
+          <div>Application Date - <span class="font-bold underline" id="p1_appDate">11 / 09 / 2026</span></div>
+        </div>
+      </div>
+
+      <!-- Customer Details Header Bar & Layout -->
+      <table class="doc-table mb-1">
+        <tr>
+          <th colspan="4" class="text-center font-bold uppercase bg-slate-100 py-1 text-xs">Customer Details</th>
+          <th class="w-28 text-center text-[10px] font-bold uppercase bg-slate-50" rowspan="6">
+            <div class="w-24 h-28 mx-auto border border-dashed border-black flex items-center justify-center overflow-hidden bg-white">
+              <img id="p1_photo" src="" alt="Photo" class="w-full h-full object-cover hidden" />
+              <span id="p1_photo_alt" class="text-[9px] text-center p-1 text-slate-500">Affix / Live Passport Photo</span>
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <td class="w-28 font-bold">Customer ID</td>
+          <td class="w-36 font-semibold" id="p1_custId">EFS 1092</td>
+          <td class="w-20 font-bold">DOB</td>
+          <td id="p1_dob">15/08/1998</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Customer Name</td>
+          <td class="font-bold uppercase" id="p1_name">PRITAM KUMAR MODAK</td>
+          <td class="font-bold">Age</td>
+          <td id="p1_age">28 Yrs</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Father's/Husband Name</td>
+          <td id="p1_guardian">S/O Late Ramesh Modak</td>
+          <td class="font-bold">Gender</td>
+          <td>
+            <span id="p1_gen_male" class="print-box">✓</span> Male &nbsp;&nbsp;
+            <span id="p1_gen_female" class="print-box"></span> Female
+          </td>
+        </tr>
+        <tr>
+          <td class="font-bold">Mother's Name</td>
+          <td id="p1_mother">Rekha Modak</td>
+          <td class="font-bold">Marital Status</td>
+          <td>
+            <span id="p1_mar_m" class="print-box">✓</span> Married &nbsp;&nbsp;
+            <span id="p1_mar_u" class="print-box"></span> Unmarried
+          </td>
+        </tr>
+        <tr>
+          <td class="font-bold">Current Address</td>
+          <td colspan="3" id="p1_address">Kalna Main Road, Ward 5, Dist Purba Bardhaman</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Landmark</td>
+          <td id="p1_landmark">Near Old Bus Stand</td>
+          <td class="font-bold">Religion</td>
+          <td colspan="2" id="p1_religion">Hindu</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Vill.</td>
+          <td id="p1_vill">Hatkalna</td>
+          <td class="font-bold">City/Town</td>
+          <td colspan="2" id="p1_city">Kalna</td>
+        </tr>
+        <tr>
+          <td class="font-bold">District</td>
+          <td id="p1_dist">Purba Bardhaman</td>
+          <td class="font-bold">State</td>
+          <td colspan="2" id="p1_state">West Bengal</td>
+        </tr>
+        <tr>
+          <td class="font-bold">PIN</td>
+          <td colspan="4" id="p1_pin">713409</td>
+        </tr>
+      </table>
+
+      <!-- Occupation Details -->
+      <table class="doc-table mb-1">
+        <tr>
+          <th colspan="4" class="text-center font-bold uppercase bg-slate-100 py-1 text-xs">Occupation Details</th>
+        </tr>
+        <tr>
+          <td class="w-32 font-bold">Salaried</td>
+          <td>
+            <span id="p1_sal_govt" class="print-box"></span> Govt. &nbsp;&nbsp;&nbsp;&nbsp;
+            <span id="p1_sal_pvt" class="print-box">✓</span> Private
+          </td>
+          <td class="w-32 font-bold">Monthly Income</td>
+          <td class="font-bold" id="p1_income">Rs. 25,000 /-</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Self Employed</td>
+          <td colspan="3">
+            <span id="p1_self_emp" class="print-box"></span>
+          </td>
+        </tr>
+      </table>
+
+      <!-- KYC Details -->
+      <table class="doc-table mb-1">
+        <tr>
+          <th colspan="4" class="text-center font-bold uppercase bg-slate-100 py-1 text-xs">KYC Details</th>
+        </tr>
+        <tr>
+          <td class="w-32 font-bold">PAN</td>
+          <td class="font-mono font-bold" id="p1_pan">ABCDE1234F</td>
+          <td class="w-32 font-bold">Aadhaar No.</td>
+          <td class="font-mono font-bold" id="p1_aadhaar">XXXX-XXXX-XXXX</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Email ID</td>
+          <td id="p1_email">pritam@example.com</td>
+          <td class="font-bold">Mobile No.</td>
+          <td class="font-mono font-bold" id="p1_mobile">9876543210</td>
+        </tr>
+        <tr>
+          <td class="font-bold">WhatsApp No.</td>
+          <td class="font-mono" id="p1_whatsapp">9876543210</td>
+          <td class="font-bold">Alt. Mob. No.</td>
+          <td class="font-mono" id="p1_altmobile">9123456789</td>
+        </tr>
+      </table>
+
+      <!-- References Details -->
+      <table class="doc-table mb-2">
+        <tr>
+          <th colspan="3" class="w-1/2 text-center font-bold uppercase bg-slate-100 py-1 text-xs">Reference 1</th>
+          <th colspan="3" class="w-1/2 text-center font-bold uppercase bg-slate-100 py-1 text-xs">Reference 2</th>
+        </tr>
+        <tr>
+          <td class="w-16 font-bold">Name</td>
+          <td colspan="2" id="p1_ref1_name">Subrata Das</td>
+          <td class="w-16 font-bold">Name</td>
+          <td colspan="2" id="p1_ref2_name">Amit Roy</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Relation</td>
+          <td colspan="2" id="p1_ref1_rel">Friend</td>
+          <td class="font-bold">Relation</td>
+          <td colspan="2" id="p1_ref2_rel">Brother</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Mo. No.</td>
+          <td colspan="2" class="font-mono" id="p1_ref1_mob">9876123450</td>
+          <td class="font-bold">Mo. No.</td>
+          <td colspan="2" class="font-mono" id="p1_ref2_mob">9832145670</td>
+        </tr>
+      </table>
+
+      <!-- Signature Area Page 1 -->
+      <div class="mt-4 pt-2 border-t border-black">
+        <div class="flex justify-between items-end">
+          <div class="w-56 text-left">
+            <div class="h-12 flex items-center justify-start">
+              <img id="p1_officerSigImg" src="" alt="Officer Signature" class="max-h-12 object-contain hidden" />
+            </div>
+            <div class="border-t border-black pt-1 text-xs font-bold uppercase">Sales Officer's Signature</div>
+            <div class="text-[11px] mt-0.5">Place: <span id="p1_place">KALNA</span></div>
+            <div class="text-[11px]">Date: - <span id="p1_sigDate">11/09/2026</span></div>
+          </div>
+          <div class="w-56 text-right">
+            <div class="h-12 flex items-center justify-end">
+              <img id="p1_custSigImg" src="" alt="Customer Signature" class="max-h-12 object-contain hidden" />
+            </div>
+            <div class="border-t border-black pt-1 text-xs font-bold uppercase text-right">Customer Signature</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Page Number -->
+      <div class="absolute bottom-3 inset-x-12 text-center text-xs font-bold border-t border-slate-300 pt-1">
+        Page 1
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PAGE 2 : BANK & PRODUCT DETAILS -->
+    <!-- ========================================== -->
+    <section class="a4-page">
+      <!-- Title Header -->
+      <div class="doc-header text-center">
+        <h1 class="text-xl font-bold tracking-wider uppercase m-0 p-0 doc-header-title">EASY TO FINANCE SERVICE</h1>
+        <div class="text-xs font-semibold text-center mt-1">
+          KALNA-713409 • LOAN & PRODUCT FINANCE SCHEDULE
+        </div>
+      </div>
+
+      <!-- Bank Details -->
+      <table class="doc-table mb-2">
+        <tr>
+          <th colspan="4" class="text-center font-bold uppercase bg-slate-100 py-1 text-xs">Customer Bank Details</th>
+        </tr>
+        <tr>
+          <td class="w-32 font-bold">Bank Name</td>
+          <td id="p2_bank">State Bank of India</td>
+          <td class="w-32 font-bold">A/C Holder Name</td>
+          <td id="p2_holder">Pritam Kumar Modak</td>
+        </tr>
+        <tr>
+          <td class="font-bold">A/C No</td>
+          <td class="font-mono font-bold" id="p2_acNo">38491029481</td>
+          <td class="font-bold">Branch</td>
+          <td id="p2_branch">Kalna</td>
+        </tr>
+        <tr>
+          <td class="font-bold">IFSC Code</td>
+          <td class="font-mono font-bold" id="p2_ifsc">SBIN0000103</td>
+          <td class="font-bold">A/C Type</td>
+          <td id="p2_acType">Savings</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Dealer Name</td>
+          <td colspan="3" id="p2_dealer">Kalna Mobile Plaza</td>
+        </tr>
+      </table>
+
+      <!-- Product Details -->
+      <table class="doc-table mb-2">
+        <tr>
+          <th colspan="4" class="text-center font-bold uppercase bg-slate-100 py-1 text-xs">Product Details</th>
+        </tr>
+        <tr>
+          <td class="w-32 font-bold">Customer ID</td>
+          <td class="font-bold" id="p2_custId">EFS 1092</td>
+          <td class="w-32 font-bold">Product Type</td>
+          <td id="p2_prodType">Mobile</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Product Name</td>
+          <td class="font-semibold" id="p2_prodName">Realme Narzo 70 Pro 5G</td>
+          <td class="font-bold">Model No.</td>
+          <td id="p2_model">RMX3868 (8GB/128GB)</td>
+        </tr>
+        <tr>
+          <td class="font-bold">IMEI No. 1</td>
+          <td class="font-mono" id="p2_imei1">864201948271039</td>
+          <td class="font-bold">IMEI No. 2</td>
+          <td class="font-mono" id="p2_imei2">864201948271047</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Product Price</td>
+          <td class="font-bold" id="p2_price">Rs. 18,000 /-</td>
+          <td class="font-bold">Tenure</td>
+          <td class="font-bold" id="p2_tenure">6 Month</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Down Payment</td>
+          <td class="font-bold text-emerald-900" id="p2_dp">Rs. 3,000 /-</td>
+          <td class="font-bold">Monthly EMI</td>
+          <td class="font-bold text-brand-900" id="p2_emi">Rs. 2,583 /-</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Processing Charge</td>
+          <td id="p2_proc">Rs. 500 /-</td>
+          <td class="font-bold">In Word</td>
+          <td class="italic text-[11px]" id="p2_inWords">Fifteen Thousand Five Hundred Rupees Only</td>
+        </tr>
+        <tr>
+          <td class="font-bold">Others Charges</td>
+          <td id="p2_other">Rs. 0 /-</td>
+          <td class="font-bold">EMI Date</td>
+          <td class="font-bold" id="p2_emiDate">7 / 2026</td>
+        </tr>
+        <tr>
+          <td class="font-bold bg-slate-50">Finance Amount</td>
+          <td colspan="3" class="font-bold text-sm bg-slate-50" id="p2_financeAmt">Rs. 15,500 /-</td>
+        </tr>
+      </table>
+
+      <!-- Agreement Clause -->
+      <div class="border border-black p-3 text-xs leading-relaxed mb-4 bg-slate-50/50">
+        <p class="font-semibold mb-1">Agreement Terms:</p>
+        <p>1. The borrower agrees to repay the loan in equal monthly installment (EMIS) of <span class="font-bold underline" id="p2_clauseEmi">Rs. 2,583 /-</span> each, starting from <span class="font-bold underline" id="p2_clauseStart">07 / 10 / 2026</span>.</p>
+        <p class="mt-2 text-[11px] text-slate-700">The customer verifies that the financed mobile handset has been received in brand new sealed working condition along with standard manufacturer warranty terms and accessories.</p>
+      </div>
+
+      <!-- Signature Area Page 2 -->
+      <div class="mt-8 pt-4 border-t border-black">
+        <div class="flex justify-between items-end">
+          <div class="w-56 text-left">
+            <div class="h-12 flex items-center justify-start">
+              <img id="p2_officerSigImg" src="" alt="Officer Signature" class="max-h-12 object-contain hidden" />
+            </div>
+            <div class="border-t border-black pt-1 text-xs font-bold uppercase">Sales Officer's Signature</div>
+            <div class="text-[11px] mt-0.5">Place: - <span id="p2_place">KALNA</span></div>
+            <div class="text-[11px]">Date: - <span id="p2_sigDate">11/09/2026</span></div>
+          </div>
+          <div class="w-56 text-right">
+            <div class="h-12 flex items-center justify-end">
+              <img id="p2_custSigImg" src="" alt="Customer Signature" class="max-h-12 object-contain hidden" />
+            </div>
+            <div class="border-t border-black pt-1 text-xs font-bold uppercase text-right">Customer Signature</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Page Number -->
+      <div class="absolute bottom-3 inset-x-12 text-center text-xs font-bold border-t border-slate-300 pt-1">
+        Page 2
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PAGE 3 : SELF-DECLARATION -->
+    <!-- ========================================== -->
+    <section class="a4-page">
+      <!-- Title Header -->
+      <div class="doc-header text-center">
+        <h1 class="text-xl font-bold tracking-wider uppercase m-0 p-0 doc-header-title">EASY TO FINANCE SERVICE</h1>
+        <div class="text-xs font-semibold text-center mt-1">KALNA-713409</div>
+      </div>
+
+      <div class="text-center my-4">
+        <h2 class="text-base font-bold uppercase underline tracking-wider">Self-Declaration</h2>
+      </div>
+
+      <div class="text-sm leading-relaxed space-y-4 px-2 text-justify">
+        <p>
+          I <span class="font-bold underline px-1" id="p3_name">PRITAM KUMAR MODAK</span>, C/O <span class="font-bold underline px-1" id="p3_guardian">Late Ramesh Modak</span> hereby declare that I have applied for a loan from <strong>Easy to Finance Services</strong> and have carefully read, understood, and agreed to all the terms and conditions of the loan agreement.
+        </p>
+
+        <p class="font-semibold">I further declare that:</p>
+
+        <ol class="list-decimal list-outside pl-6 space-y-2.5 text-xs sm:text-sm">
+          <li>
+            I will pay the monthly EMI regularly on or before the due date as mentioned in the loan schedule.
+          </li>
+          <li>
+            In case of delay or default in payment, I agree and accept to pay any penalty (<strong>472</strong>), late fee (<strong>128</strong>), and additional charges (<strong>230</strong>), as prescribed by the company.
+          </li>
+          <li>
+            I agree to pay all EMIs on time irrespective of any loss, damage, or theft of the financed mobile phone.
+          </li>
+          <li>
+            I confirm that all the information and documents provided by me are true, correct, and authentic to the best of my knowledge.
+          </li>
+          <li>
+            I understand that any false declaration or failure to follow the terms and conditions may lead to legal or financial action as per company policy.
+          </li>
+        </ol>
+
+        <p class="pt-2">
+          I willingly undertake to abide by all the clauses and regulations set forth by <strong>Easy to Finance Service</strong> during the tenure of my loan.
+        </p>
+      </div>
+
+      <!-- Bottom Signature & Details -->
+      <div class="mt-16 pt-6 border-t border-black px-2">
+        <div class="flex justify-between items-start">
+          <div class="text-xs space-y-1">
+            <div>Date: <span class="font-bold underline" id="p3_date">11/09/2026</span></div>
+            <div>Place: <span class="font-bold">KALNA</span></div>
+          </div>
+          <div class="text-right text-xs space-y-1 w-64">
+            <div class="h-16 flex items-center justify-end">
+              <img id="p3_custSigImg" src="" alt="Customer Signature" class="max-h-16 object-contain hidden" />
+            </div>
+            <div>Signature: <span class="border-b border-black inline-block w-36"></span></div>
+            <div>Name: <span class="font-bold uppercase" id="p3_sigName">PRITAM KUMAR MODAK</span></div>
+            <div>Contact No: <span class="font-mono font-bold" id="p3_contact">9876543210</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Page Number -->
+      <div class="absolute bottom-3 inset-x-12 text-center text-xs font-bold border-t border-slate-300 pt-1">
+        Page 3
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- PAGE 4 : APPLICATION LETTER TO MANAGER -->
+    <!-- ========================================== -->
+    <section class="a4-page">
+      <!-- Title Header -->
+      <div class="doc-header text-center">
+        <h1 class="text-xl font-bold tracking-wider uppercase m-0 p-0 doc-header-title">EASY TO FINANCE SERVICE</h1>
+        <div class="text-xs font-semibold text-center mt-1">CUSTOMER APPLICATION DESK</div>
+      </div>
+
+      <!-- Letter Content -->
+      <div class="text-sm leading-relaxed space-y-4 px-2 mt-4">
+        <div>
+          <p class="font-bold">To,</p>
+          <p class="font-semibold">The Manager</p>
+          <p class="font-semibold">Easy to Finance Service</p>
+          <p class="font-semibold">KALNA-713409</p>
+        </div>
+
+        <div class="py-1">
+          <p class="font-bold underline text-center">Subject: Application For Mobile Finance</p>
+        </div>
+
+        <div>
+          <p class="font-semibold">Respected Sir/Madam,</p>
+          <p class="mt-2 text-justify">
+            I am <span class="font-bold underline px-1" id="p4_name">PRITAM KUMAR MODAK</span> son/daughter / spouse of <span class="font-bold underline px-1" id="p4_guardian">Late Ramesh Modak</span> writing to formally apply for Finance (Rs. <span class="font-bold underline px-1" id="p4_amt">15,500 /-</span>) Mobile from your esteemed organization. I have reviewed your finance schemes and believe that my financial requirements align with your services.
+          </p>
+          <p class="mt-2 text-justify">
+            I hereby declare that all the information provided by me is true and accurate to the best of my knowledge. I am also attaching the necessary documents for verification:
+          </p>
+        </div>
+
+        <ol class="list-decimal list-inside space-y-1 font-medium pl-4 text-xs sm:text-sm">
+          <li>Aadhaar Card copy</li>
+          <li>PAN Card copy</li>
+          <li>Address proof</li>
+          <li>Bank passbook copy</li>
+          <li>Any additional documents as required</li>
+        </ol>
+
+        <p class="text-justify pt-1">
+          I kindly request that you process my loan application at the earliest. Please let me know if any further details or formalities are needed.
+        </p>
+
+        <p>Thank you for your consideration.</p>
+      </div>
+
+      <!-- Sign-off Page 4 -->
+      <div class="mt-16 pt-6 border-t border-black px-2">
+        <div class="flex justify-between items-start">
+          <div class="text-xs space-y-1">
+            <div>Date: - <span class="font-bold underline" id="p4_date">11/09/2026</span></div>
+            <div>Place: <span class="font-bold">KALNA</span></div>
+          </div>
+          <div class="text-right text-xs space-y-1 w-64">
+            <p class="font-medium">Yours faithfully,</p>
+            <div class="h-16 flex items-center justify-end">
+              <img id="p4_custSigImg" src="" alt="Customer Signature" class="max-h-16 object-contain hidden" />
+            </div>
+            <div>Name: - <span class="font-bold uppercase" id="p4_sigName">PRITAM KUMAR MODAK</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Page Number -->
+      <div class="absolute bottom-3 inset-x-12 text-center text-xs font-bold border-t border-slate-300 pt-1">
+        Page 4
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT LOGIC -->
+  <!-- ======================================================== -->
+  <script>
+    // State variables
+    let videoStream = null;
+    let capturedPhotoData = null;
+    let custSignaturePad = null;
+    let officerSignaturePad = null;
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set current dates
+      const today = new Date().toISOString().split('T')[0];
+      const todayFormatted = new Date().toLocaleDateString('en-GB');
+      
+      const appDateEl = document.getElementById('appDate');
+      if (appDateEl) appDateEl.value = today;
+
+      const offDateEl = document.getElementById('officerDate');
+      if (offDateEl) offDateEl.value = today;
+
+      // Initialize Canvas signature pads
+      initSignaturePad('custSigCanvas');
+      initSignaturePad('officerSigCanvas');
+
+      // Initial Calculations
+      calculateLoan();
+    });
+
+    // --- SIGNATURE PAD LOGIC ---
+    function initSignaturePad(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        if (e.touches && e.touches.length > 0) {
+          return {
+            x: (e.touches[0].clientX - rect.left) * scaleX,
+            y: (e.touches[0].clientY - rect.top) * scaleY
+          };
+        }
+        return {
+          x: (e.clientX - rect.left) * scaleX,
+          y: (e.clientY - rect.top) * scaleY
+        };
+      }
+
+      function startDraw(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        lastX = pos.x;
+        lastY = pos.y;
+        e.preventDefault();
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        lastX = pos.x;
+        lastY = pos.y;
+        e.preventDefault();
+      }
+
+      function stopDraw() {
+        isDrawing = false;
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      window.addEventListener('mouseup', stopDraw);
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      window.addEventListener('touchend', stopDraw);
+    }
+
+    function clearSignature(type) {
+      const canvasId = type === 'cust' ? 'custSigCanvas' : 'officerSigCanvas';
+      const canvas = document.getElementById(canvasId);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // --- LIVE CAMERA FUNCTIONS ---
+    async function startCamera() {
+      try {
+        const video = document.getElementById('videoElement');
+        const startBtn = document.getElementById('startCamBtn');
+        const snapBtn = document.getElementById('snapBtn');
+        const guide = document.getElementById('cameraGuide');
+        const placeholder = document.getElementById('photoPlaceholder');
+        const preview = document.getElementById('photoPreview');
+
+        videoStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+
+        video.srcObject = videoStream;
+        video.classList.remove('hidden');
+        preview.classList.add('hidden');
+        placeholder.classList.add('hidden');
+        guide.classList.remove('hidden');
+        startBtn.classList.add('hidden');
+        snapBtn.classList.remove('hidden');
+      } catch (err) {
+        console.error("Camera access error:", err);
+        alert("Could not access camera. Please check camera permissions or use the file upload option below.");
+      }
+    }
+
+    function capturePhoto() {
+      const video = document.getElementById('videoElement');
+      const canvas = document.getElementById('photoCanvas');
+      const preview = document.getElementById('photoPreview');
+      const snapBtn = document.getElementById('snapBtn');
+      const retakeBtn = document.getElementById('retakeBtn');
+      const guide = document.getElementById('cameraGuide');
+
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const ctx = canvas.getContext('2d');
+
+      // Mirror horizontally like selfie
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      capturedPhotoData = canvas.toDataURL('image/jpeg', 0.9);
+      preview.src = capturedPhotoData;
+      preview.classList.remove('hidden');
+      video.classList.add('hidden');
+      guide.classList.add('hidden');
+      snapBtn.classList.add('hidden');
+      retakeBtn.classList.remove('hidden');
+
+      // Stop camera stream
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+    }
+
+    function retakePhoto() {
+      const retakeBtn = document.getElementById('retakeBtn');
+      retakeBtn.classList.add('hidden');
+      startCamera();
+    }
+
+    function handleFilePhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        capturedPhotoData = e.target.result;
+        const preview = document.getElementById('photoPreview');
+        const video = document.getElementById('videoElement');
+        const placeholder = document.getElementById('photoPlaceholder');
+        const retakeBtn = document.getElementById('retakeBtn');
+        const startBtn = document.getElementById('startCamBtn');
+        const snapBtn = document.getElementById('snapBtn');
+        const guide = document.getElementById('cameraGuide');
+
+        if (videoStream) {
+          videoStream.getTracks().forEach(track => track.stop());
+          videoStream = null;
+        }
+
+        preview.src = capturedPhotoData;
+        preview.classList.remove('hidden');
+        video.classList.add('hidden');
+        placeholder.classList.add('hidden');
+        guide.classList.add('hidden');
+        snapBtn.classList.add('hidden');
+        retakeBtn.classList.add('hidden');
+        startBtn.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- FORM HELPERS & AUTOMATION ---
+    function calculateAge() {
+      const dobVal = document.getElementById('dob').value;
+      if (!dobVal) return;
+      const dob = new Date(dobVal);
+      const diff = Date.now() - dob.getTime();
+      const ageDate = new Date(diff);
+      const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+      document.getElementById('age').value = calculatedAge;
+    }
+
+    function syncWhatsApp() {
+      const isSame = document.getElementById('sameWa').checked;
+      if (isSame) {
+        document.getElementById('whatsappNo').value = document.getElementById('mobileNo').value;
+      }
+    }
+
+    function formatAadhaar(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length > 12) val = val.substring(0, 12);
+      let formatted = '';
+      for (let i = 0; i < val.length; i++) {
+        if (i > 0 && i % 4 === 0) formatted += '-';
+        formatted += val[i];
+      }
+      input.value = formatted;
+    }
+
+    function calculateLoan() {
+      const price = parseFloat(document.getElementById('productPrice').value) || 0;
+      const dp = parseFloat(document.getElementById('downPayment').value) || 0;
+      const proc = parseFloat(document.getElementById('procCharge').value) || 0;
+      const other = parseFloat(document.getElementById('otherCharge').value) || 0;
+      const tenure = parseInt(document.getElementById('tenureMonths').value) || 6;
+
+      const finance = Math.max(0, (price - dp) + proc + other);
+      const emi = tenure > 0 ? Math.round(finance / tenure) : 0;
+
+      document.getElementById('financeAmount').value = finance;
+      document.getElementById('monthlyEmi').value = emi;
+      document.getElementById('amountInWords').value = numberToIndianWords(finance) + " Only";
+    }
+
+    function numberToIndianWords(num) {
+      if (num === 0) return "Zero Rupees";
+      const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+      const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+      function inWords(n) {
+        if (n < 20) return a[n];
+        const digit = n % 10;
+        return b[Math.floor(n / 10)] + (digit !== 0 ? ' ' + a[digit] : ' ');
+      }
+
+      let words = '';
+      let crore = Math.floor(num / 10000000);
+      num %= 10000000;
+      let lakh = Math.floor(num / 100000);
+      num %= 100000;
+      let thousand = Math.floor(num / 1000);
+      num %= 1000;
+      let hundred = Math.floor(num / 100);
+      let rem = num % 100;
+
+      if (crore > 0) words += inWords(crore) + 'Crore ';
+      if (lakh > 0) words += inWords(lakh) + 'Lakh ';
+      if (thousand > 0) words += inWords(thousand) + 'Thousand ';
+      if (hundred > 0) words += inWords(hundred) + 'Hundred ';
+      if (rem > 0) words += inWords(rem);
+
+      return words.trim() + " Rupees";
+    }
+
+    function fillSampleData() {
+      document.getElementById('customerName').value = "Pritam Kumar Modak";
+      document.getElementById('dob').value = "1998-08-15";
+      calculateAge();
+      document.getElementById('guardianName').value = "Late Ramesh Modak";
+      document.getElementById('motherName').value = "Rekha Modak";
+      document.getElementById('religion').value = "Hindu";
+      document.getElementById('landmark').value = "Near Kalna Bus Stand";
+      document.getElementById('currentAddress').value = "Hatkalna Road, Ward No. 5, P.O. & P.S. Kalna";
+      document.getElementById('village').value = "Hatkalna";
+      document.getElementById('city').value = "Kalna";
+      document.getElementById('district').value = "Purba Bardhaman";
+      document.getElementById('pin').value = "713409";
+
+      document.getElementById('monthlyIncome').value = "28000";
+      document.getElementById('panNo').value = "BNZPM1948K";
+      document.getElementById('aadhaarNo').value = "XXXX-XXXX-XXXX";
+      document.getElementById('emailId').value = "pritam.kalna@example.com";
+      document.getElementById('mobileNo').value = "9876543210";
+      document.getElementById('whatsappNo').value = "9876543210";
+      document.getElementById('altMobileNo').value = "9832109876";
+
+      document.getElementById('ref1Name').value = "Subrata Das";
+      document.getElementById('ref1Relation').value = "Friend";
+      document.getElementById('ref1Mobile').value = "9876123450";
+
+      document.getElementById('ref2Name').value = "Amit Roy";
+      document.getElementById('ref2Relation').value = "Cousin";
+      document.getElementById('ref2Mobile').value = "9832145670";
+
+      document.getElementById('bankName').value = "State Bank of India";
+      document.getElementById('acHolderName').value = "Pritam Kumar Modak";
+      document.getElementById('acNo').value = "39201948192";
+      document.getElementById('branch').value = "Kalna Main Branch";
+      document.getElementById('ifscCode').value = "SBIN0000103";
+      document.getElementById('dealerName').value = "Kalna Mobile Care";
+
+      document.getElementById('productName').value = "Realme Narzo 70 Pro 5G";
+      document.getElementById('modelNo').value = "RMX3868 (8GB / 128GB)";
+      document.getElementById('imei1').value = "864201948271039";
+      document.getElementById('imei2').value = "864201948271047";
+      document.getElementById('productPrice').value = "18000";
+      document.getElementById('downPayment').value = "3000";
+      document.getElementById('procCharge').value = "500";
+      calculateLoan();
+
+      // Sample draw on canvases
+      drawSampleSignature('custSigCanvas', 'Pritam Modak');
+      drawSampleSignature('officerSigCanvas', 'EasyFinance');
+    }
+
+    function drawSampleSignature(canvasId, text) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "italic 32px 'Tinos', cursive, serif";
+      ctx.fillStyle = "#1e293b";
+      ctx.fillText(text, 50, 80);
+      ctx.beginPath();
+      ctx.moveTo(40, 95);
+      ctx.bezierCurveTo(120, 85, 200, 110, 280, 90);
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function resetForm() {
+      if (confirm("Reset all form entries?")) {
+        document.getElementById('loanForm').reset();
+        clearSignature('cust');
+        clearSignature('officer');
+        capturedPhotoData = null;
+        document.getElementById('photoPreview').classList.add('hidden');
+        document.getElementById('photoPlaceholder').classList.remove('hidden');
+      }
+    }
+
+    // --- REPLICA DOCUMENT POPULATION & VIEW TOGGLE ---
+    function previewDocument() {
+      // 1. Photo Mapping
+      if (capturedPhotoData) {
+        document.getElementById('p1_photo').src = capturedPhotoData;
+        document.getElementById('p1_photo').classList.remove('hidden');
+        document.getElementById('p1_photo_alt').classList.add('hidden');
+      }
+
+      // 2. Signature Mapping
+      const custCanvas = document.getElementById('custSigCanvas');
+      const officerCanvas = document.getElementById('officerSigCanvas');
+      const custData = custCanvas.toDataURL('image/png');
+      const officerData = officerCanvas.toDataURL('image/png');
+
+      ['p1', 'p2', 'p3', 'p4'].forEach(prefix => {
+        const custImg = document.getElementById(prefix + '_custSigImg');
+        if (custImg) {
+          custImg.src = custData;
+          custImg.classList.remove('hidden');
+        }
+      });
+      ['p1', 'p2'].forEach(prefix => {
+        const offImg = document.getElementById(prefix + '_officerSigImg');
+        if (offImg) {
+          offImg.src = officerData;
+          offImg.classList.remove('hidden');
+        }
+      });
+
+      // 3. Page 1 Fields
+      const formNo = document.getElementById('formNo').value || 'EFS';
+      const appDate = document.getElementById('appDate').value || new Date().toISOString().split('T')[0];
+      const custId = document.getElementById('customerId').value || '---';
+      const custName = document.getElementById('customerName').value || '---';
+      const dob = document.getElementById('dob').value || '---';
+      const age = document.getElementById('age').value || '---';
+      const guardian = document.getElementById('guardianName').value || '---';
+      const gender = document.querySelector('input[name="gender"]:checked')?.value || 'Male';
+      const marital = document.querySelector('input[name="maritalStatus"]:checked')?.value || 'Married';
+      const mother = document.getElementById('motherName').value || '---';
+      const religion = document.getElementById('religion').value || '---';
+      const address = document.getElementById('currentAddress').value || '---';
+      const landmark = document.getElementById('landmark').value || '---';
+      const vill = document.getElementById('village').value || '---';
+      const city = document.getElementById('city').value || 'Kalna';
+      const dist = document.getElementById('district').value || 'Purba Bardhaman';
+      const state = document.getElementById('state').value || 'West Bengal';
+      const pin = document.getElementById('pin').value || '713409';
+
+      document.getElementById('p1_formNo').innerText = formNo;
+      document.getElementById('p1_appDate').innerText = formatDateDisplay(appDate);
+      document.getElementById('p1_custId').innerText = 'EFS ' + custId;
+      document.getElementById('p1_name').innerText = custName.toUpperCase();
+      document.getElementById('p1_dob').innerText = formatDateDisplay(dob);
+      document.getElementById('p1_age').innerText = age ? age + ' Yrs' : '---';
+      document.getElementById('p1_guardian').innerText = guardian;
+      document.getElementById('p1_mother').innerText = mother;
+      document.getElementById('p1_religion').innerText = religion;
+      document.getElementById('p1_address').innerText = address;
+      document.getElementById('p1_landmark').innerText = landmark;
+      document.getElementById('p1_vill').innerText = vill;
+      document.getElementById('p1_city').innerText = city;
+      document.getElementById('p1_dist').innerText = dist;
+      document.getElementById('p1_state').innerText = state;
+      document.getElementById('p1_pin').innerText = pin;
+
+      document.getElementById('p1_gen_male').innerText = gender === 'Male' ? '✓' : '';
+      document.getElementById('p1_gen_female').innerText = gender === 'Female' ? '✓' : '';
+      document.getElementById('p1_mar_m').innerText = marital === 'Married' ? '✓' : '';
+      document.getElementById('p1_mar_u').innerText = marital === 'Unmarried' ? '✓' : '';
+
+      // Occupation & KYC Page 1
+      const empType = document.querySelector('input[name="empType"]:checked')?.value || 'Salaried - Private';
+      document.getElementById('p1_sal_govt').innerText = empType === 'Salaried - Govt.' ? '✓' : '';
+      document.getElementById('p1_sal_pvt').innerText = empType === 'Salaried - Private' ? '✓' : '';
+      document.getElementById('p1_self_emp').innerText = empType === 'Self Employed' ? '✓' : '';
+      document.getElementById('p1_income').innerText = 'Rs. ' + (document.getElementById('monthlyIncome').value || '0') + ' /-';
+
+      document.getElementById('p1_pan').innerText = (document.getElementById('panNo').value || '---').toUpperCase();
+      document.getElementById('p1_aadhaar').innerText = document.getElementById('aadhaarNo').value || '---';
+      document.getElementById('p1_email').innerText = document.getElementById('emailId').value || '---';
+      document.getElementById('p1_mobile').innerText = document.getElementById('mobileNo').value || '---';
+      document.getElementById('p1_whatsapp').innerText = document.getElementById('whatsappNo').value || '---';
+      document.getElementById('p1_altmobile').innerText = document.getElementById('altMobileNo').value || '---';
+
+      // References Page 1
+      document.getElementById('p1_ref1_name').innerText = document.getElementById('ref1Name').value || '---';
+      document.getElementById('p1_ref1_rel').innerText = document.getElementById('ref1Relation').value || '---';
+      document.getElementById('p1_ref1_mob').innerText = document.getElementById('ref1Mobile').value || '---';
+      document.getElementById('p1_ref2_name').innerText = document.getElementById('ref2Name').value || '---';
+      document.getElementById('p1_ref2_rel').innerText = document.getElementById('ref2Relation').value || '---';
+      document.getElementById('p1_ref2_mob').innerText = document.getElementById('ref2Mobile').value || '---';
+
+      const offPlace = document.getElementById('officerPlace').value || 'KALNA';
+      const offDate = document.getElementById('officerDate').value || appDate;
+      document.getElementById('p1_place').innerText = offPlace;
+      document.getElementById('p1_sigDate').innerText = formatDateDisplay(offDate);
+
+      // 4. Page 2 Bank & Product Details
+      document.getElementById('p2_bank').innerText = document.getElementById('bankName').value || '---';
+      document.getElementById('p2_holder').innerText = document.getElementById('acHolderName').value || custName;
+      document.getElementById('p2_acNo').innerText = document.getElementById('acNo').value || '---';
+      document.getElementById('p2_branch').innerText = document.getElementById('branch').value || '---';
+      document.getElementById('p2_ifsc').innerText = (document.getElementById('ifscCode').value || '---').toUpperCase();
+      document.getElementById('p2_acType').innerText = document.getElementById('acType').value || 'Savings';
+      document.getElementById('p2_dealer').innerText = document.getElementById('dealerName').value || '---';
+
+      document.getElementById('p2_custId').innerText = 'EFS ' + custId;
+      document.getElementById('p2_prodType').innerText = document.getElementById('productType').value || 'Mobile';
+      document.getElementById('p2_prodName').innerText = document.getElementById('productName').value || '---';
+      document.getElementById('p2_model').innerText = document.getElementById('modelNo').value || '---';
+      document.getElementById('p2_imei1').innerText = document.getElementById('imei1').value || '---';
+      document.getElementById('p2_imei2').innerText = document.getElementById('imei2').value || '---';
+
+      const priceVal = document.getElementById('productPrice').value || '0';
+      const dpVal = document.getElementById('downPayment').value || '0';
+      const tenureVal = document.getElementById('tenureMonths').value || '6';
+      const emiVal = document.getElementById('monthlyEmi').value || '0';
+      const procVal = document.getElementById('procCharge').value || '0';
+      const otherVal = document.getElementById('otherCharge').value || '0';
+      const finVal = document.getElementById('financeAmount').value || '0';
+      const inWordsVal = document.getElementById('amountInWords').value || '';
+      const emiDateVal = document.getElementById('emiDueDate').value || '7th of month';
+      const startMonthVal = document.getElementById('emiStartMonth').value || 'Next Month';
+
+      document.getElementById('p2_price').innerText = 'Rs. ' + priceVal + ' /-';
+      document.getElementById('p2_dp').innerText = 'Rs. ' + dpVal + ' /-';
+      document.getElementById('p2_tenure').innerText = tenureVal + ' Month';
+      document.getElementById('p2_emi').innerText = 'Rs. ' + emiVal + ' /-';
+      document.getElementById('p2_proc').innerText = 'Rs. ' + procVal + ' /-';
+      document.getElementById('p2_other').innerText = 'Rs. ' + otherVal + ' /-';
+      document.getElementById('p2_financeAmt').innerText = 'Rs. ' + finVal + ' /-';
+      document.getElementById('p2_inWords').innerText = inWordsVal;
+      document.getElementById('p2_emiDate').innerText = emiDateVal;
+      document.getElementById('p2_clauseEmi').innerText = 'Rs. ' + emiVal + ' /-';
+      document.getElementById('p2_clauseStart').innerText = startMonthVal;
+
+      document.getElementById('p2_place').innerText = offPlace;
+      document.getElementById('p2_sigDate').innerText = formatDateDisplay(offDate);
+
+      // 5. Page 3 Self-Declaration
+      document.getElementById('p3_name').innerText = custName.toUpperCase();
+      document.getElementById('p3_guardian').innerText = guardian;
+      document.getElementById('p3_date').innerText = formatDateDisplay(appDate);
+      document.getElementById('p3_sigName').innerText = custName.toUpperCase();
+      document.getElementById('p3_contact').innerText = document.getElementById('mobileNo').value || '---';
+
+      // 6. Page 4 Application Letter
+      document.getElementById('p4_name').innerText = custName.toUpperCase();
+      document.getElementById('p4_guardian').innerText = guardian;
+      document.getElementById('p4_amt').innerText = finVal + ' /-';
+      document.getElementById('p4_sigName').innerText = custName.toUpperCase();
+      document.getElementById('p4_date').innerText = formatDateDisplay(appDate);
+
+      // Toggle View Mode
+      document.body.classList.add('preview-mode');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function backToEdit() {
+      document.body.classList.remove('preview-mode');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function triggerPrint() {
+      window.print();
+    }
+
+    function formatDateDisplay(dateStr) {
+      if (!dateStr) return '';
+      if (dateStr.includes('/')) return dateStr;
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        return parts[2] + ' / ' + parts[1] + ' / ' + parts[0];
+      }
+      return dateStr;
+    }
+  </script>
+</body>
+</html>
